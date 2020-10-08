@@ -1,0 +1,15 @@
+{
+  "name": "carbon-intensity-extension",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "package:chrome": "nodezip -c extension.zip manifest.json icons background-page.html background-script.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "node-zip": "^1.1.1"
+  }
+}
