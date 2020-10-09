@@ -15,15 +15,12 @@ const versions = {
 
 const incrementVersion = ({ versionType, message }) =>
   exec(`npm version ${versionType} -m "Upgrade to %s. ${message}"`);
+
 const pushTagsToGit = () => exec("git push --follow-tags");
 
 const createZip = () => {
   const { version } = require("./package.json");
-  const filesToZip = [
-    "background-page.html",
-    "background-script.js",
-    "manifest.json",
-  ];
+  const filesToZip = ["background-page.html", "background-script.js"];
 
   const iconDir = "icons";
   const imgToZip = ["carbon-48.png"];
@@ -31,6 +28,14 @@ const createZip = () => {
   filesToZip.forEach((file) => {
     zip.file(file, fs.readFileSync(join(__dirname, file), "utf8"));
   });
+
+  // Ensure the manifest version is the same as the package version
+  const manifestFilename = "manifest.json";
+  const manifest = JSON.parse(
+    fs.readFileSync(join(__dirname, manifestFilename), "utf8")
+  );
+  manifest.version = version;
+  zip.file(manifestFilename, JSON.stringify(manifest), "utf8");
 
   imgToZip.forEach((imgFile) => {
     zip
