@@ -48,7 +48,11 @@ const createZip = () => {
   });
 
   zip
-    .generateNodeStream({ type: "nodebuffer", streamFiles: true })
+    .generateNodeStream({
+      type: "nodebuffer",
+      streamFiles: true,
+      compression: "DEFLATE",
+    })
     .pipe(fs.createWriteStream(`extension-v${version}.zip`))
     .on("finish", function () {
       // JSZip generates a readable stream with a "end" event,
