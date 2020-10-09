@@ -4,6 +4,12 @@ if (typeof browser === "undefined") {
   var browser = chrome;
 }
 
+// Call the api to get the current carbon intensity
+const getIntensity = () =>
+  fetch("https://api.carbonintensity.org.uk/intensity")
+    .then((resp) => resp.json())
+    .then((x) => x.data[0].intensity.actual);
+
 // Render the image which is a number in a coloured box
 const render = (intensity) => {
   // Wait until font actually loaded
@@ -44,13 +50,12 @@ const render = (intensity) => {
   browser.browserAction.setTitle({
     title: `Current carbon intensity - ${intensity} gCO2/kWh`,
   });
-};
 
-// Call the api to get the current carbon intensity
-const getIntensity = () =>
-  fetch("https://api.carbonintensity.org.uk/intensity")
-    .then((resp) => resp.json())
-    .then((x) => x.data[0].intensity.actual);
+  // Update in 30 minutes
+  setTimeout(() => {
+    getIntensity().then(render);
+  }, 1000 * 60 * 60 * 30);
+};
 
 // Navigate to the carbon intensity site on click
 browser.browserAction.onClicked.addListener(() => {
