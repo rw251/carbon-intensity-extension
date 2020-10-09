@@ -44,11 +44,11 @@ const createZip = () => {
 
   zip
     .generateNodeStream({ type: "nodebuffer", streamFiles: true })
-    .pipe(fs.createWriteStream(`extension-${version}.zip`))
+    .pipe(fs.createWriteStream(`extension-v${version}.zip`))
     .on("finish", function () {
       // JSZip generates a readable stream with a "end" event,
       // but is piped here in a writable stream which emits a "finish" event.
-      console.log("out.zip written.");
+      console.log(`extension-v${version}.zip written`);
     });
 };
 
