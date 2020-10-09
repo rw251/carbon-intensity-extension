@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "package:chrome": "nodezip -c extension-v0.2.0.zip manifest.json icons background-page.html background-script.js"
+    "package": "node deploy.js"
   },
   "keywords": [],
   "author": "",

@@ -18,7 +18,7 @@ const incrementVersion = ({ versionType, message }) =>
 const pushTagsToGit = () => exec("git push --follow-tags");
 
 const createZip = () => {
-  const { version } = require("package.json");
+  const { version } = require("./package.json");
   const filesToZip = [
     "background-page.html",
     "background-script.js",
