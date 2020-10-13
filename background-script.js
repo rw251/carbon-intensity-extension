@@ -12,6 +12,8 @@ const getIntensity = () =>
 
 // Render the image which is a number in a coloured box
 const render = (intensity) => {
+  console.log('Updating icon with new intensity: ' + intensity);
+
   // Wait until font actually loaded
   if (!document.fonts.check("bold 90px Just Another Hand")) {
     setTimeout(() => {
@@ -54,7 +56,7 @@ const render = (intensity) => {
   // Update in 30 minutes
   setTimeout(() => {
     getIntensity().then(render);
-  }, 1000 * 60 * 60 * 30);
+  }, 1000 * 60 * 30);
 };
 
 // Navigate to the carbon intensity site on click
