@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "package": "node deploy.js"
+    "package": "node deploy.js",
+    "zip": "node deploy.js zip"
   },
   "keywords": [],
   "author": "",

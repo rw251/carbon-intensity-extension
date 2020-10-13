@@ -75,29 +75,33 @@ const upToDateCheck = () =>
       return shouldContinue;
     });
 
-upToDateCheck().then(() => {
-  inquirer
-    .prompt([
-      {
-        name: "versionType",
-        type: "list",
-        message:
-          "What type of versioning do you want to do (vX.Y.Z - major bumps X, minor bumps Y, patch bumps Z)",
-        choices: Object.keys(versions),
-        default: versions.patch,
-      },
-      {
-        name: "message",
-        type: "input",
-        message: "Enter a message for the tag",
-        validate: (input) =>
-          input.length > 0
-            ? true
-            : "Must leave a message - think of your future self!!",
-      },
-    ])
-    .then(incrementVersion)
-    .then(pushTagsToGit)
-    .then(createZip)
-    .catch((err) => console.log(err));
-});
+if(process.argv.length > 2 && process.argv[2] === 'zip') {
+  createZip();
+} else {
+  upToDateCheck().then(() => {
+    inquirer
+      .prompt([
+        {
+          name: "versionType",
+          type: "list",
+          message:
+            "What type of versioning do you want to do (vX.Y.Z - major bumps X, minor bumps Y, patch bumps Z)",
+          choices: Object.keys(versions),
+          default: versions.patch,
+        },
+        {
+          name: "message",
+          type: "input",
+          message: "Enter a message for the tag",
+          validate: (input) =>
+            input.length > 0
+              ? true
+              : "Must leave a message - think of your future self!!",
+        },
+      ])
+      .then(incrementVersion)
+      .then(pushTagsToGit)
+      .then(createZip)
+      .catch((err) => console.log(err));
+  });
+}
