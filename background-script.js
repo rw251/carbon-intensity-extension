@@ -4,6 +4,11 @@ if (typeof browser === "undefined") {
   var browser = chrome;
 }
 
+const refreshInterval = 30 * 60 * 1000; // 30 minutes
+let lastRefreshTime;
+let lastTimer;
+let fontCheck = 0;
+
 // Call the api to get the current carbon intensity
 const getIntensity = () =>
   fetch("https://api.carbonintensity.org.uk/intensity")
@@ -12,7 +17,6 @@ const getIntensity = () =>
 
 // Render the image which is a number in a coloured box
 const render = (intensity) => {
-  console.log('Updating icon with new intensity: ' + intensity);
 
   // Wait until font actually loaded
   if (!document.fonts.check("bold 90px Just Another Hand")) {
@@ -21,6 +25,9 @@ const render = (intensity) => {
       return;
     }, 100);
   }
+
+  lastRefreshTime = new Date();
+  console.log(lastRefreshTime.toISOString() + ' - Updating icon with new intensity: ' + intensity);
 
   const ctx = document.createElement("canvas").getContext("2d");
   ctx.canvas.width = 300;
@@ -54,9 +61,10 @@ const render = (intensity) => {
   });
 
   // Update in 30 minutes
-  setTimeout(() => {
+  clearTimeout(lastTimer);
+  lastTimer = setTimeout(() => {
     getIntensity().then(render);
-  }, 1000 * 60 * 30);
+  }, refreshInterval);
 };
 
 // Navigate to the carbon intensity site on click
@@ -64,6 +72,17 @@ browser.browserAction.onClicked.addListener(() => {
   browser.tabs.create({
     url: "https://carbonintensity.org.uk/",
   });
+});
+
+// Runs on tab activation - can use to detect wake up
+browser.tabs.onActivated.addListener(() => {
+  const activateTime = new Date();
+  console.log(activateTime.toISOString() + ' - tab activated');
+  if(activateTime - lastRefreshTime > refreshInterval * 1.1) {
+    console.log('Been too long - lets refresh');
+    if(lastTimer) clearTimeout(lastTimer);
+    getIntensity().then(render);
+  }
 });
 
 getIntensity().then(render);
