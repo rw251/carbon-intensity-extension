@@ -13,7 +13,22 @@ let fontCheck = 0;
 const getIntensity = () =>
   fetch("https://api.carbonintensity.org.uk/intensity")
     .then((resp) => resp.json())
-    .then((x) => x.data[0].intensity.actual);
+    .then((x) => {
+      if(!x || !x.data || !x.data[0] || !x.data[0].intensity) {
+        return false;
+      }
+      if(x.data[0].intensity.actual && x.data[0].intensity.actual !== "null"){
+        return x.data[0].intensity.actual;
+      }
+      if(x.data[0].intensity.forecast && x.data[0].intensity.forecast !== "null") {
+        return x.data[0].intensity.forecast;
+      }
+      return false;
+    })
+    .catch((err) => {
+      console.log(err);
+      return false;
+    });
 
 // Render the image which is a number in a coloured box
 const render = (intensity) => {
@@ -42,15 +57,15 @@ const render = (intensity) => {
     textColor = "white";
   } else if (intensity < 150) {
     ctx.fillStyle = "lightgreen";
-  } else if (intensity < 150) {
-    ctx.fillStyle = "yellow";
   } else if (intensity < 250) {
+    ctx.fillStyle = "yellow";
+  } else if (intensity < 350) {
     ctx.fillStyle = "orange";
   }
 
   ctx.fillRect(0, 0, 300, 300);
   ctx.fillStyle = textColor;
-  ctx.fillText(intensity, 48, 78);
+  ctx.fillText(intensity || "...", 48, 78);
 
   // Chrome needs this to be a square of a particular size
   // 96x96 works
@@ -60,11 +75,11 @@ const render = (intensity) => {
     title: `Current carbon intensity - ${intensity} gCO2/kWh`,
   });
 
-  // Update in 30 minutes
+  // Update in 30 minutes - or sooner if failed
   clearTimeout(lastTimer);
   lastTimer = setTimeout(() => {
     getIntensity().then(render);
-  }, refreshInterval);
+  }, intensity ? refreshInterval : 5000);
 };
 
 // Navigate to the carbon intensity site on click
