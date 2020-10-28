@@ -11,7 +11,8 @@
 
   "browser_action": {
     "default_icon": "icons/carbon-48.png",
-    "default_title": "Carbon intensity"
+    "default_title": "Carbon intensity",
+    "default_popup": "popup.html"
   },
 
   "background": {
